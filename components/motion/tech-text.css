@@ -1,0 +1,20 @@
+/* ------------------------------------------------------------------ *
+ *  TechText — the wordmark's own canvas surface.
+ *
+ *  The component draws everything itself, so this only has to give the
+ *  canvas a box to fill and keep touch scrolling working across it.
+ * ------------------------------------------------------------------ */
+
+.tech-text {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.tech-text-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,702 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ------------------------------------------------------------------ *
+ *  JJDJ design system
+ *  Teal is the only accent. Everything else is black, off-white or a
+ *  grey in between — exactly like the logo.
+ * ------------------------------------------------------------------ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- light theme (default) ---------- */
+:root {
+  --bg: #f7f7f4; /* warm off-white */
+  --surface: #ffffff; /* raised panels */
+  --card: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --fg: #0a0a0a;
+  --fg-muted: #5c5c5c;
+  --fg-subtle: #8a8a86;
+
+  --tile: #0a0a0a; /* the logo's tile colour for the current theme */
+
+  /* The single accent — matches the teal in the logo exactly. */
+  --accent: #14b8a6;
+  --accent-hover: #2dd4bf;
+  --accent-text: #0e7c72; /* deeper teal so body-size teal text passes AA */
+  --accent-strong: #0f9488; /* large/bold teal text + pressed states */
+  --accent-contrast: #08100f; /* accessible text/icon colour ON teal */
+  --accent-glow: rgba(20, 184, 166, 0.28);
+  --accent-wash: rgba(20, 184, 166, 0.08);
+
+  --ring: #14b8a6;
+  --dot: rgba(0, 0, 0, 0.09); /* background dot grid */
+  --grain: 0.03; /* noise texture opacity */
+  --shimmer: rgba(0, 0, 0, 0.05);
+
+  --shadow-card: 0 1px 2px rgba(16, 18, 17, 0.04),
+    0 8px 24px -12px rgba(16, 18, 17, 0.12);
+  --shadow-raised: 0 2px 4px rgba(16, 18, 17, 0.04),
+    0 18px 48px -24px rgba(16, 18, 17, 0.22);
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.04), 0 12px 32px -20px rgba(0, 0, 0, 0.3);
+  --inner-glow: inset 0 0 0 0 transparent;
+}
+
+/* ---------- dark theme ---------- */
+.dark {
+  --bg: #0a0a0a; /* near-black */
+  --surface: #141414;
+  --card: #1a1a1a;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --fg: #f5f5f2;
+  --fg-muted: #a1a1a1;
+  --fg-subtle: #6f6f6c;
+
+  --tile: #f5f5f2;
+
+  --accent: #14b8a6;
+  --accent-hover: #2dd4bf;
+  --accent-text: #2dd4bf;
+  --accent-strong: #14b8a6;
+  --accent-contrast: #08100f;
+  --accent-glow: rgba(20, 184, 166, 0.35);
+  --accent-wash: rgba(20, 184, 166, 0.12);
+
+  --ring: #2dd4bf;
+  --dot: rgba(255, 255, 255, 0.07);
+  --grain: 0.025;
+  --shimmer: rgba(255, 255, 255, 0.06);
+
+  --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.6);
+  --shadow-raised: 0 24px 64px -32px rgba(0, 0, 0, 0.9);
+  --shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.04), 0 16px 40px -24px #000;
+  /* faint inner glow so dark cards read as objects, not holes */
+  --inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--fg);
+  --color-muted-foreground: var(--fg-muted);
+  --color-subtle-foreground: var(--fg-subtle);
+  --color-tile: var(--tile);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-wash: var(--accent-wash);
+  --color-ring: var(--ring);
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+
+  --radius-card: 12px;
+  --radius-panel: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-nav: var(--shadow-nav);
+
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 46s) linear infinite;
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+  --animate-dot-pulse: dot-pulse 2.4s ease-out infinite;
+  --animate-breathe: breathe 6s ease-in-out infinite;
+  --animate-ticker: ticker 22s linear infinite;
+  --animate-spin-slow: spin 2.4s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes dot-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes ticker {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* ---------- base ---------- */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    /* Lenis drives scrolling; keep native smooth-scroll out of its way. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Very faint grain so flat areas feel tactile rather than digital. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: var(--grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: rgba(20, 184, 166, 0.32);
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Visible teal focus for keyboard users only, never on mouse clicks. */
+  a:focus:not(:focus-visible),
+  button:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Search fields carry their own clear control — drop the native one so
+     the two never sit side by side. */
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* Custom scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(20, 184, 166, 0.6);
+  }
+
+  /* The custom cursor replaces the native one on fine pointers. */
+  html[data-custom-cursor="true"],
+  html[data-custom-cursor="true"] a,
+  html[data-custom-cursor="true"] button,
+  html[data-custom-cursor="true"] [role="button"] {
+    cursor: none;
+  }
+
+  kbd {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    line-height: 1;
+  }
+}
+
+/* ---------- custom utilities ---------- */
+
+/** Page gutter: 1200px max content width on an 8px spacing grid. */
+@utility container-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/** The hero headline: fluid 56px → 112px. */
+@utility text-hero {
+  font-size: clamp(3.5rem, 8.2vw, 7rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  font-weight: 900;
+}
+
+/** Section headings: fluid 32px → 56px. */
+@utility text-section {
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 900;
+}
+
+/** Fluid 22px → 30px for sub-section titles and card headlines. */
+@utility text-subsection {
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+/** Mono "eyebrow" label sitting above a section heading. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fg-muted);
+}
+
+/** Faint dotted grid used behind heroes. */
+@utility bg-dotted-grid {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--dot) 1px,
+    transparent 0
+  );
+  background-size: 32px 32px;
+}
+
+/** Fades the left/right edges of a marquee. */
+@utility mask-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+
+/** The standard card treatment: hairline border + layered shadow. */
+@utility surface-card {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  box-shadow: var(--shadow-card), var(--inner-glow);
+}
+
+/** Hover shine that sweeps across buttons. */
+@utility shine {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    translate: -120% 0;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 80%
+    );
+    transition: translate 700ms var(--ease-brand);
+  }
+
+  &:hover::after {
+    translate: 120% 0;
+  }
+}
+
+/** Animated underline that draws left → right on hover/focus. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 320ms var(--ease-brand);
+
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/** Shimmering skeleton block. */
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: color-mix(in oklab, var(--fg) 6%, transparent);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+}
+
+/** Hide scrollbars on drag carousels while keeping them scrollable. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- paint-time reveals ----------
+ *
+ *  Above-the-fold entrances are pure CSS. The server-rendered markup is the
+ *  finished state, the keyframes start at first paint and the browser runs
+ *  them before a single byte of JavaScript has been parsed — no hydration,
+ *  no IntersectionObserver, no framer-motion.
+ *
+ *  Only the `from` frame is declared, so the resting state is whatever the
+ *  element naturally looks like. If the animation never runs (reduced motion,
+ *  no JS, an old browser) the content is simply there.
+ */
+
+@keyframes paint-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance, 24px));
+    filter: blur(6px);
+  }
+}
+
+@keyframes paint-down {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--reveal-distance, 16px)));
+    filter: blur(6px);
+  }
+}
+
+@keyframes paint-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes paint-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes mask-word-up {
+  from {
+    transform: translateY(110%);
+  }
+}
+
+/* The intro tiles dropping in. Declared here rather than in Framer so the
+ * first thing a new visitor sees is painted and moving before hydration. */
+@keyframes tile-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .paint-reveal {
+    animation-duration: 600ms;
+    animation-timing-function: var(--ease-brand);
+    animation-delay: var(--reveal-delay, 0ms);
+    animation-fill-mode: both;
+  }
+
+  .paint-up {
+    animation-name: paint-up;
+  }
+
+  .paint-down {
+    animation-name: paint-down;
+  }
+
+  .paint-fade {
+    animation-name: paint-fade;
+  }
+
+  .paint-scale {
+    animation-name: paint-scale;
+  }
+
+  /* One word of a masked headline, lifted out from behind its own edge. */
+  .mask-word-inner {
+    animation: mask-word-up 720ms var(--ease-brand) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Tiles of the intro mark, dropping into place one after another. Short on
+     purpose: the overlay hands over to the glide at a fixed time after the
+     load starts, and these have to have finished reading by then. */
+  .tile-drop {
+    animation: tile-drop 480ms var(--ease-brand) both;
+    animation-delay: var(--tile-delay, 0ms);
+  }
+}
+
+.mask-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.mask-word-inner {
+  display: inline-block;
+}
+
+/* ---------- view transitions ----------
+ *
+ *  Two things happen at once when the theme changes:
+ *
+ *  1. The page is revealed by a circular wipe spreading out from the toggle
+ *     button. That is the root view transition, clipped with a circle whose
+ *     centre is the click point (see useThemeTransition).
+ *
+ *  2. The four logo tiles inside the toggle flip in 3D, one after another,
+ *     turning from off-white to black (or back).
+ *
+ *  For both to be visible at the same time the tiles are lifted out of the
+ *  root snapshot and given their own named transition, otherwise the root
+ *  snapshot would freeze them mid-flip. The marker attribute is added to the
+ *  clicked button only, for the duration of the transition, which also keeps
+ *  the names unique — duplicate view-transition-names abort the transition.
+ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+[data-vt-tiles] [data-tile="0"] {
+  view-transition-name: tile-0;
+}
+[data-vt-tiles] [data-tile="1"] {
+  view-transition-name: tile-1;
+}
+[data-vt-tiles] [data-tile="2"] {
+  view-transition-name: tile-2;
+}
+[data-vt-tiles] [data-tile="3"] {
+  view-transition-name: tile-3;
+}
+
+@keyframes vt-tile-out {
+  from {
+    transform: rotateY(0deg) scale(1);
+  }
+  to {
+    transform: rotateY(-90deg) scale(0.94);
+  }
+}
+
+@keyframes vt-tile-in {
+  from {
+    transform: rotateY(90deg) scale(0.94);
+  }
+  to {
+    transform: rotateY(0deg) scale(1);
+  }
+}
+
+::view-transition-group(tile-0),
+::view-transition-group(tile-1),
+::view-transition-group(tile-2),
+::view-transition-group(tile-3) {
+  /* Sit above the root snapshot so the flip is never swallowed by the wipe. */
+  z-index: 6;
+  perspective: 900px;
+  animation: none;
+}
+
+::view-transition-image-pair(tile-0),
+::view-transition-image-pair(tile-1),
+::view-transition-image-pair(tile-2),
+::view-transition-image-pair(tile-3) {
+  transform-style: preserve-3d;
+}
+
+/* Staggered 60ms apart, so they turn over one after another. */
+::view-transition-old(tile-0) {
+  animation: vt-tile-out 340ms var(--ease-brand) both;
+}
+::view-transition-new(tile-0) {
+  animation: vt-tile-in 340ms var(--ease-brand) both;
+}
+::view-transition-old(tile-1) {
+  animation: vt-tile-out 340ms var(--ease-brand) 60ms both;
+}
+::view-transition-new(tile-1) {
+  animation: vt-tile-in 340ms var(--ease-brand) 60ms both;
+}
+::view-transition-old(tile-2) {
+  animation: vt-tile-out 340ms var(--ease-brand) 120ms both;
+}
+::view-transition-new(tile-2) {
+  animation: vt-tile-in 340ms var(--ease-brand) 120ms both;
+}
+::view-transition-old(tile-3) {
+  animation: vt-tile-out 340ms var(--ease-brand) 180ms both;
+}
+::view-transition-new(tile-3) {
+  animation: vt-tile-in 340ms var(--ease-brand) 180ms both;
+}
+
+/* The preloader writes this attribute for returning visitors, so they never
+   see a flash of the intro overlay before React mounts. */
+html[data-preloader="seen"] [data-preloader-root] {
+  display: none !important;
+}
+
+/* Failsafe exit.
+ *
+ *  The intro overlay normally lifts itself once React hydrates and runs its
+ *  glide into the navbar logo. If React never arrives — scripts blocked, a
+ *  bundle still downloading, a slow first load on a cold device — the visitor
+ *  must not be left staring at a full-screen overlay with the hero trapped
+ *  behind it. React marks the overlay as armed the moment it mounts, which
+ *  cancels this animation, so the two hand-offs never fight. */
+@keyframes preloader-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+[data-preloader-root]:not([data-preloader-armed]) {
+  animation: preloader-exit 460ms var(--ease-brand) 900ms forwards;
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body::before {
+    opacity: 0;
+  }
+
+  /* The footer wordmark's reveal is written as inline styles by Framer, which
+   * the animation guard above cannot reach. Pin it to its finished frame
+   * instead of leaving it half-revealed at the bottom of the page. */
+  [data-footer-wordmark] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

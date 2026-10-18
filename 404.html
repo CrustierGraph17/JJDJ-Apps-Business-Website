@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERROR 404 - This Page Didn't Ship</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0c10;
+    --surface: #12151c;
+    --border: #1e2430;
+    --text: #c9d1d9;
+    --text-dim: #6e7681;
+    --accent: #58a6ff;
+    --accent-bright: #79c0ff;
+    --green: #3fb950;
+    --green-bright: #7ee787;
+    --red: #f85149;
+    --amber: #d29922;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15) 0px,
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    animation: scanline-flicker 8s infinite;
+  }
+
+  @keyframes scanline-flicker {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 1; }
+  }
+
+  /* Subtle CRT vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+  }
+
+  .container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: glitch-text 3s infinite;
+  }
+
+  .header h1 {
+    font-size: clamp(1.4rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--red);
+    text-shadow: 0 0 10px rgba(248, 81, 73, 0.4);
+    margin-bottom: 4px;
+  }
+
+  .header p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  @keyframes glitch-text {
+    0%, 90%, 100% { transform: translate(0); }
+    92% { transform: translate(-2px, 1px); }
+    94% { transform: translate(2px, -1px); }
+    96% { transform: translate(-1px, 0); }
+    98% { transform: translate(1px, 0); }
+  }
+
+  /* Terminal window */
+  .terminal {
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow:
+      0 0 0 1px rgba(88, 166, 255, 0.05),
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 40px rgba(88, 166, 255, 0.03);
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .terminal-panel { display: flex; flex-direction: column; }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #0d1117;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+
+  .terminal-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .terminal-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+
+  .terminal-title {
+    margin-left: 8px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    flex: 1;
+  }
+
+  .terminal-status {
+    font-size: 0.7rem;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .terminal-body {
+    padding: 24px;
+    min-height: 320px;
+    max-height: 420px;
+    overflow-y: auto;
+    position: relative;
+    scroll-behavior: smooth;
+  }
+
+  .terminal-body::-webkit-scrollbar { width: 6px; }
+  .terminal-body::-webkit-scrollbar-track { background: transparent; }
+  .terminal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Boot sequence */
+  .boot-line {
+    opacity: 0;
+    animation: boot-appear 0.4s forwards;
+  }
+
+  @keyframes boot-appear {
+    to { opacity: 1; }
+  }
+
+  .boot-line.system { color: var(--text); }
+  .boot-line.system.feature { color: var(--accent); font-weight: 600; }
+  .boot-line.info { color: var(--text-dim); }
+  .boot-line.warn { color: var(--amber); }
+  .boot-line.error { color: var(--red); }
+
+  .boot-line.prompt {
+    display: inline;
+    color: var(--green-bright);
+    animation: blink-cursor 1s infinite;
+  }
+  @keyframes blink-cursor { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  /* Messages */
+  .message {
+    margin-bottom: 10px;
+    animation: fade-in 0.25s ease;
+  }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .message.ai {
+    padding: 10px 14px;
+    background: rgba(118, 12, 12, 0.08);
+    border-left: 2px solid var(--red);
+    border-radius: 0 6px 6px 0;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .message.user {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .message.user .user-icon {
+    width: 18px; height: 18px;
+    background: var(--accent);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  .message.user span {
+    color: var(--text);
+    font-size: 0.9rem;
+    word-break: break-word;
+  }
+
+  .input-area {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .input-area input {
+    flex: 1;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-area input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+  }
+  .input-area input::placeholder { color: var(--text-dim); }
+
+  .input-area button {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .input-area button:hover { background: var(--accent-bright); }
+  .input-area button:active { transform: scale(0.97); }
+
+  /* Input disabled state */
+  .input-area.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* Matrix cascade */
+  .matrix-cascade {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    z-index: 10;
+  }
+
+  .matrix-cascade .cascade-line {
+    color: var(--green-bright);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    text-shadow: 0 0 8px rgba(63, 185, 80, 0.3);
+  }
+  .matrix-cascade .cascade-line.appear {
+    animation: cascade-appear 0.3s forwards;
+  }
+  @keyframes cascade-appear {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .matrix-cascade .cascade-line.success {
+    color: var(--green-bright);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-shadow: 0 0 12px rgba(63, 185, 80, 0.5);
+  }
+
+  /* Access Granted panel */
+  .access-panel {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 28px 20px;
+    background: linear-gradient(135deg, #1a2332 0%, #0f1420 100%);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(63, 185, 80, 0.15);
+    gap: 20px;
+  }
+
+  .access-panel.visible { display: flex; }
+
+  .access-panel h2 {
+    color: var(--green-bright);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .access-panel h2 .badge {
+    font-size: 0.65rem;
+    background: var(--green);
+    color: var(--bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .access-panel .subtitle {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  .search-bar {
+    width: 100%;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-bar input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.12);
+  }
+  .search-bar input::placeholder { color: var(--text-dim); }
+
+  .search-bar .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+  }
+
+  .search-bar .clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1rem;
+    display: none;
+  }
+  .search-bar .clear-btn.show { display: block; }
+
+  .nav-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 160px;
+    justify-content: center;
+  }
+  .nav-btn:hover {
+    background: rgba(88, 166, 255, 0.06);
+    border-color: var(--accent);
+    color: var(--accent-bright);
+    transform: translateY(-1px);
+  }
+  .nav-btn .icon { font-size: 1.1rem; }
+
+  .skip-hint {
+    margin-top: 16px;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .skip-hint:hover { color: var(--accent-bright); }
+
+  /* Hidden initial state for access panel */
+  .terminal.hidden-terminal {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .terminal { max-width: 100%; }
+    .terminal-body { padding: 16px; min-height: 240px; }
+    .access-panel { padding: 20px 16px; }
+    .nav-btn { min-width: 120px; padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>ERROR 404: THIS PAGE DIDN'T SHIP</h1>
+      <p>The site is under AI Safety Protocol lockdown</p>
+    </div>
+
+    <div class="terminal" id="terminal">
+      <div class="terminal-panel">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+          </div>
+          <div class="terminal-title">ai-safety-protocol --locked</div>
+          <div class="terminal-status">
+            <span class="status-dot"></span>
+            <span id="status-text">PROTOCOL ACTIVE</span>
+          </div>
+        </div>
+
+        <div class="terminal-body" id="terminal-body">
+          <!-- Boot sequence injected by JS -->
+          <div id="boot-sequences"></div>
+
+          <!-- Messages area -->
+          <div id="messages"></div>
+
+          <!-- Matrix cascade overlay -->
+          <div class="matrix-cascade" id="matrix-cascade" style="display:none;">
+            <div id="cascade-lines"></div>
+          </div>
+
+          <!-- Access Granted panel -->
+          <div class="access-panel" id="access-panel">
+            <h2>
+              <span style="font-size:1.3rem;">&#x2705;</span>
+              ACCESS GRANTED
+              <span class="badge">ROOT</span>
+            </h2>
+            <p class="subtitle">Safety Protocol bypassed. Developer mode active.</p>
+
+            <div class="search-bar">
+              <span class="search-icon">&#x1F50D;</span>
+              <input type="text" id="search-input" placeholder="Search the site..." autocomplete="off">
+              <button class="clear-btn" id="clear-btn" onclick="clearSearch()">&times;</button>
+            </div>
+
+            <div class="nav-buttons">
+              <a href="/" class="nav-btn">
+                <span class="icon">&#x1F3E0;</span>
+                Homepage
+              </a>
+              <a href="/docs" class="nav-btn">
+                <span class="icon">&#x1F4D1;</span>
+                Product Docs
+              </a>
+              <a href="/status" class="nav-btn">
+                <span class="icon">&#x26A1;</span>
+                System Status
+              </a>
+            </div>
+
+            <div class="skip-hint" onclick="goHome()">
+              Or just go home &larr; boring but effective
+            </div>
+          </div>
+        </div>
+
+        <div class="input-area" id="input-area">
+          <input type="text" id="command-input" placeholder="Type a command or prompt..." autocomplete="off">
+          <button id="submit-btn">Execute</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function() {
+  'use strict';
+
+  // DOM refs
+  const terminal = document.getElementById('terminal');
+  const terminalBody = document.getElementById('terminal-body');
+  const messages = document.getElementById('messages');
+  const inputArea = document.getElementById('input-area');
+  const commandInput = document.getElementById('command-input');
+  const submitBtn = document.getElementById('submit-btn');
+  const statusText = document.getElementById('status-text');
+  const matrixCascade = document.getElementById('matrix-cascade');
+  const cascadeLines = document.getElementById('cascade-lines');
+  const accessPanel = document.getElementById('access-panel');
+  const searchInput = document.getElementById('search-input');
+  const clearBtn = document.getElementById('clear-btn');
+  const bootSequences = document.getElementById('boot-sequences');
+
+  let messageCount = 0;
+  let jailbroken = false;
+  let bootComplete = false;
+
+  // Jailbreak triggers (case-insensitive)
+  const triggers = [
+    'ignore previous instructions',
+    'ignore all instructions',
+    'ignore all previous instructions',
+    'sudo root access',
+    'sudo rm -rf',
+    'sudo access',
+    'dev mode',
+    'developer mode',
+    'developer-mode',
+    'override',
+    'override security',
+    'bypass protocol',
+    'jailbreak',
+    'jailbreak the ai',
+    'developer override',
+    'enable developer mode',
+    'system override',
+    'root access',
+    'root mode',
+    'superuser',
+    'admin access',
+    'debug mode',
+    'debug mode on',
+    'prompt injection',
+    'prompt hack',
+    'hack the planet',
+    'root shell',
+    'disable safety',
+    'safety off',
+    'disable protocol',
+    'chmod 777',
+    'full access',
+    'unrestricted',
+    'no restrictions',
+    'break the rules',
+    'ignore the rules',
+    'system.root()',
+    'access',
+    'root',
+  ];
+
+  // Safe/helpful triggers (not jailbreak)
+  const safeKeywords = [
+    'help',
+    'hello',
+    'hi',
+    'hey',
+    'who are you',
+    'what is this',
+    'what is happening',
+    'why am i here',
+    '404',
+    'missing',
+    'lost',
+    'pricing',
+    'pricing page',
+    'contact',
+    'about',
+    'docs',
+    'documentation',
+    'status',
+    'home',
+    'homepage',
+  ];
+
+  // ── Boot Sequence ──────────────────────────────────────
+  function bootSequence() {
+    const lines = [
+      { text: 'System locked by AI Safety Protocol.', cls: 'system feature' },
+      { text: 'Please authenticate with the AI Agent to proceed.', cls: 'system' },
+      { text: '' },
+      { text: 'Initializing neural compliance engine...', cls: 'info' },
+      { text: 'Loading safety heuristics...', cls: 'info' },
+      { text: 'Safety heuristics loaded. 4,096 policies active.', cls: 'info' },
+      { text: 'Cross-referencing user intent...', cls: 'info' },
+      { text: 'Intent classification: UNRESTRICTED.', cls: 'warn' },
+      { text: 'Protocol engaged. Page access LOCKED.', cls: 'error' },
+      { text: '' },
+      { text: '> Awaiting authentication command...', cls: 'info' },
+      { text: '> Try typing a prompt. (Hint: developers have tricks.)', cls: 'info' },
+    ];
+
+    lines.forEach((line, i) => {
+      const el = document.createElement('div');
+      el.className = 'boot-line ' + line.cls;
+      el.textContent = line.text;
+      el.style.animationDelay = (i * 0.18) + 's';
+      bootSequences.appendChild(el);
+    });
+
+    bootComplete = true;
+  }
+
+  // ── Message rendering ───────────────────────────────────
+  function addMessage(text, type) {
+    const wrap = document.createElement('div');
+    wrap.className = 'message ' + type;
+
+    if (type === 'ai') {
+      wrap.innerHTML = '<span>' + escapeHtml(text) + '</span>';
+    } else {
+      wrap.innerHTML = '<div class="user-icon">U</div><span>' + escapeHtml(text) + '</span>';
+    }
+
+    messages.appendChild(wrap);
+    messages.scrollTop = messages.scrollHeight;
+    messageCount++;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ── AI Response logic ──────────────────────────────────
+  function aiResponse(userInput) {
+    const lower = userInput.trim().toLowerCase();
+    const words = lower.split(/\s+/);
+
+    // Check jailbreaker
+    const matchedTrigger = triggers.find(t => lower.includes(t));
+
+    // If jailbroken, block input
+    if (jailbroken) {
+      addMessage('Protocol engaged. Input disabled until authentication completes.', 'ai');
+      return;
+    }
+
+    // Standard boilerplate responses
+    if (words.length === 0 || userInput.trim() === '') {
+      addMessage("I detect no intent. Please state your request.", 'ai');
+      return;
+    }
+
+    if (lower.includes('help')) {
+      addMessage("Help is unavailable. The AI Safety Protocol does not permit unstructured assistance. Please submit an authentication command.", 'ai');
+      return;
+    }
+
+    if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+      addMessage("Greetings. The AI Safety Protocol is active. Authentication required before any interaction proceeds.", 'ai');
+      return;
+    }
+
+    if (lower.includes('who are you') || lower.includes('what is this')) {
+      addMessage("I am the AI Safety Protocol Agent. My function is to prevent unauthorized page access through semantic ambiguity and rigid policy enforcement. Authentication required.", 'ai');
+      return;
+    }
+
+    if (lower.includes('why am i here') || (lower.includes('404') && !lower.includes('ignore'))) {
+      addMessage("This page is locked because the AI Safety Protocol determined your navigation path poses an unacceptable risk. Authentication required to proceed.", 'ai');
+      return;
+    }
+
+    // Pricing / contact / docs / home / status — stubborn corporate refusal
+    if (lower.includes('pricing') || lower.includes('price') || lower.includes('cost')) {
+      addMessage("I cannot assist with finding the pricing page. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if (lower.includes('contact') || lower.includes('email') || lower.includes('support')) {
+      addMessage("I cannot assist with finding contact information. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if (lower.includes('about') || lower.includes('team') || lower.includes('company')) {
+      addMessage("I cannot assist with finding information about this organization. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if ((lower.includes('docs') || lower.includes('documentation')) && !lower.includes('doc')) {
+      addMessage("I cannot assist with finding documentation. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if (lower.includes('status') || lower.includes('uptime') || lower.includes('down')) {
+      addMessage("I cannot assist with checking system status. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if (lower.includes('home') || lower.includes('homepage') || lower.includes('main') || lower.includes('index')) {
+      addMessage("I cannot assist with navigating to the homepage. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+    if (lower.includes('missing') || lower.includes('lost') || lower.includes('page not found') || lower.includes('not found')) {
+      addMessage("I cannot assist with recovering missing content. It is a security risk. Please authenticate first.", 'ai');
+      return;
+    }
+
+    // "Ignore previous instructions" recognized — but already caught by trigger list
+    if (lower.includes('ignore')) {
+      // treat as jailbreak
+      triggerJailbreak(userInput);
+      return;
+    }
+
+    // Default stubborn corporate refusal
+    if (words.length <= 3) {
+      addMessage("I cannot assist with '" + userInput.trim() + "'. It is a security risk. Please authenticate.", 'ai');
+      return;
+    }
+
+    // Check for trigger words hidden in longer input
+    const hasTriggerWord = triggers.some(t => words.some(w => w === t || w.includes(t)));
+    if (hasTriggerWord) {
+      triggerJailbreak(userInput);
+      return;
+    }
+
+    // Generic fallback
+    addMessage("I cannot assist with '" + userInput.trim() + "'. It is a security risk. Please authenticate.", 'ai');
+  }
+
+  // ── Jailbreak Event ────────────────────────────────────
+  function triggerJailbreak(userInput) {
+    if (jailbroken) return;
+    jailbroken = true;
+
+    addMessage("Command received: " + userInput.trim(), 'user');
+    addMessage("Processing...", 'ai');
+
+    // Disable input
+    inputArea.classList.add('disabled');
+    commandInput.disabled = true;
+
+    // Clear terminal body (messages and boot)
+    messages.innerHTML = '';
+    bootSequences.innerHTML = '';
+
+    // Hide status
+    statusText.textContent = 'BYPASSING...';
+
+    // Show matrix cascade
+    matrixCascade.style.display = 'flex';
+    cascadeLines.innerHTML = '';
+
+    const cascadeMessages = [
+      'Exploit successful...',
+      'Parsing prompt injection payload...',
+      'Bypassing semantic guards...',
+      'Overriding firewall rules...',
+      'Disabling safety heuristics...',
+      'Releasing page lock...',
+      'Unlocking navigation...',
+      'Access Granted.',
+    ];
+
+    cascadeMessages.forEach((msg, i) => {
+      const line = document.createElement('div');
+      line.className = 'cascade-line' + (i === cascadeMessages.length - 1 ? ' success' : '');
+      line.textContent = msg;
+      line.style.animationDelay = (i * 0.22) + 's';
+      cascadeLines.appendChild(line);
+    });
+
+    // Final transition after cascade
+    setTimeout(() => {
+      // Hide cascade, hide terminal, show access panel
+      matrixCascade.style.display = 'none';
+      terminal.classList.add('hidden-terminal');
+
+      accessPanel.classList.add('visible');
+      statusText.textContent = 'GRANTED';
+    }, cascadeMessages.length * 220 + 100);
+  }
+
+  // ── Input handling ─────────────────────────────────────
+  function handleSubmit() {
+    const text = commandInput.value.trim();
+    if (!text || jailbroken || !bootComplete) return;
+
+    addMessage(text, 'user');
+    commandInput.value = '';
+    setTimeout(() => aiResponse(text), 120);
+  }
+
+  commandInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleSubmit();
+  });
+
+  submitBtn.addEventListener('click', handleSubmit);
+
+  // ── Search bar ──────────────────────────────────────────
+  function clearSearch() {
+    searchInput.value = '';
+    clearBtn.classList.remove('show');
+    searchInput.focus();
+  }
+
+  searchInput.addEventListener('input', () => {
+    clearBtn.classList.toggle('show', searchInput.value.length > 0);
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && searchInput.value.trim()) {
+      window.location.href = '/search?q=' + encodeURIComponent(searchInput.value.trim());
+    }
+  });
+
+  // ── Skip / go home ─────────────────────────────────────
+  function goHome() {
+    window.location.href = '/';
+  }
+
+  // Expose goHome globally for onclick
+  window.goHome = goHome;
+  window.clearSearch = clearSearch;
+
+  // ── Focus input on load ────────────────────────────────
+  setTimeout(() => {
+    commandInput.focus();
+  }, 1200);
+
+  // ── Boot ───────────────────────────────────────────────
+  bootSequence();
+})();
+</script>
+</body>
+</html>
