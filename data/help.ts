@@ -237,8 +237,8 @@ export const helpArticles: HelpArticle[] = [
       {
         heading: "Paid plans",
         bullets: [
-          "Notle+ — $12.99 USD every 30 days. 200 AI credits, 2 hours of cloud transcription and 1 GB cloud storage per usage month.",
-          "Notle Student — $24.99 USD every 30 days after a 3-day trial. 600 AI credits, 5 hours of cloud transcription and 5 GB cloud storage.",
+          "Notle Student — $12.99 USD every 30 days. 200 AI credits, 2 hours of cloud transcription and 1 GB cloud storage per usage month.",
+          "Notle+ — $24.99 USD every 30 days after a 3-day trial. 600 AI credits, 5 hours of cloud transcription and 5 GB cloud storage.",
           "Notle Max — $39.99 USD every 30 days. 1,000 AI credits, 10 hours of cloud transcription and 15 GB cloud storage.",
         ],
         note: "Yearly billing is also offered, with savings of 17%, 20% and 25% respectively. Base prices are in USD. Taxes and any local currency conversion are shown at checkout.",
@@ -246,7 +246,7 @@ export const helpArticles: HelpArticle[] = [
       {
         heading: "Trials and renewals",
         paragraphs: [
-          "The Student trial is available once per eligible customer. It renews automatically at the stated price unless you cancel before it ends. Cancelling stops the next renewal and keeps access until the confirmed period ends.",
+          "The Notle+ trial is available once per eligible customer. It renews automatically at the stated price unless you cancel before it ends. Cancelling stops the next renewal and keeps access until the confirmed period ends.",
           "Payment method, trial eligibility and renewal terms are shown by Whop, which handles checkout and billing.",
         ],
       },
@@ -381,7 +381,7 @@ export const helpFaqs = [
   {
     question: "How much do paid plans cost?",
     answer:
-      "Notle+ is $12.99 USD every 30 days, Notle Student is $24.99 USD every 30 days after a 3-day trial, and Notle Max is $39.99 USD every 30 days. Yearly options are available.",
+      "Notle Student is $12.99 USD every 30 days, Notle+ is $24.99 USD every 30 days after a 3-day trial, and Notle Max is $39.99 USD every 30 days. Yearly options are available.",
   },
   {
     question: "When does Notle launch?",

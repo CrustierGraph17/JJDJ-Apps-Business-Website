@@ -182,7 +182,7 @@ export default async function ProductPage({
             <div className="flex flex-col items-start gap-4 rounded-card border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-[64ch] text-[0.875rem] leading-relaxed text-muted-foreground">
                 Yearly billing is also offered, with savings of 17%, 20% and
-                25%. The Student trial is available once per eligible customer
+                25%. The Notle+ trial is available once per eligible customer
                 and renews automatically unless cancelled before it ends.
               </p>
               <Button asChild variant="secondary" className="shrink-0">

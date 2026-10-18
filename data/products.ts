@@ -170,14 +170,14 @@ export const products: Product[] = [
           "Dox, Point, Exceed and Draft work locally. Manually build knowledge maps, run focus sessions and transcribe English audio on your device.",
       },
       {
-        name: "Notle+",
+        name: "Notle Student",
         price: "$12.99 USD",
         period: "every 30 days",
         detail:
           "200 AI credits, 2 hours of cloud transcription and 1 GB cloud storage per usage month. Local editors included.",
       },
       {
-        name: "Notle Student",
+        name: "Notle+",
         price: "$24.99 USD",
         period: "every 30 days after a 3-day trial",
         detail:
@@ -229,7 +229,7 @@ export const products: Product[] = [
       {
         question: "How much do the paid plans cost?",
         answer:
-          "Notle+ is $12.99 USD every 30 days, Notle Student is $24.99 USD every 30 days after a 3-day trial, and Notle Max is $39.99 USD every 30 days. Yearly options are also available. Taxes and any local currency conversion are shown at checkout.",
+          "Notle Student is $12.99 USD every 30 days, Notle+ is $24.99 USD every 30 days after a 3-day trial, and Notle Max is $39.99 USD every 30 days. Yearly options are also available. Taxes and any local currency conversion are shown at checkout.",
       },
       {
         question: "Can I use Notle on my phone?",
